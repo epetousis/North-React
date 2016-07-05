@@ -12,6 +12,10 @@ import {
   View
 } from 'react-native';
 
+var CompassAPI = require("./compass_api.js");
+var test = new CompassAPI();
+console.log(test.getApiKey("","",""));
+
 class North extends Component {
   render() {
     return (
