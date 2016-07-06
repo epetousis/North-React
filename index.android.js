@@ -9,23 +9,33 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  StatusBar
 } from 'react-native';
+import YANavigator from 'react-native-ya-navigator';
+
+import { CompassLogin, CompassAPI } from "./compass_api";
+import { LoginView, SchoolSelectionView } from "./login_ui";
 
 class North extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+      <View style={{flex: 1}}>
+      <StatusBar backgroundColor="#1E5E87" barStyle="light-content" />
+      <YANavigator
+      initialRoute={{
+        component: SchoolSelectionView,
+      }}
+      navBarStyle={{
+        backgroundColor: '#2980b9',
+      }}
+      navBarBackBtn={{
+        textStyle: {
+          color: '#fff'
+        },
+      }}
+     />
+     </View>
     );
   }
 }
@@ -37,10 +47,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  toolbar: {
+    height: 56,
+    backgroundColor: '#cccccc',
   },
   instructions: {
     textAlign: 'center',
