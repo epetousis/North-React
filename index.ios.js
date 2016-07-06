@@ -9,28 +9,33 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  StatusBar
 } from 'react-native';
+import YANavigator from 'react-native-ya-navigator';
 
-var CompassAPI = require("./compass_api.js");
-var test = new CompassAPI();
-console.log(test.getApiKey("","",""));
+import { CompassLogin, CompassAPI } from "./compass_api";
+import { LoginView, SchoolSelectionView } from "./login_ui";
 
 class North extends Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
+      <View style={{flex: 1}}>
+      <StatusBar barStyle="light-content" />
+      <YANavigator
+        initialRoute={{
+          component: SchoolSelectionView,
+        }}
+        navBarStyle={{
+          backgroundColor: '#2980b9',
+        }}
+        navBarBackBtn={{
+          textStyle: {
+            color: '#fff'
+          },
+        }}
+     />
+     </View>
     );
   }
 }

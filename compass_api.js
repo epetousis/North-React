@@ -1,32 +1,94 @@
 "use strict";
-import React, { Component } from 'react';
-module.exports = class CompassAPI extends Component {
-	constructor(props, context) {
-    super(props,context);
-  	}
-	async getApiKey(compassURL, user, pass) {
-		try {
-			var response = await fetch(compassURL+"/services/admin.svc/getapikey", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					schoolId: "", // we need a separate method to find this
-					password: pass,
-					sussiId: user,
-				})
-			});
-			var json = await response.text();
-			return response.status;
-		} catch(error) {
-			alert(error);
-		}
-	}
+
+let apiKeyURL = "/services/admin.svc/getapikey";
+let schoolDetailsURL = "/services/admin.svc/getschooldetailbasic";
+let schoolNameURL = "/services/admin.svc/getschoolname";
+
+let serverDomains = ["cl1.vic.jdlf.com.au",
+"bn1.vic.jdlf.com.au",
+"kw1.vic.jdlf.com.au",
+"lbrw1.vic.jdlf.com.au",
+"lbmr1.vic.jdlf.com.au",
+"ed1.vic.jdlf.com.au"]
+
+class CompassAPI {
+  constructor(apiKey) {
+    this.apiKey = apiKey;
+  }
+
+  async homeContent() {
+    // to do
+  }
 }
 
-/*class CompassAPI {
-	constructor(apiKey) {
-		this.apiKey = apiKey;
-	}
-}*/
+/**
+ * Send a JSON request, get a JSON response. Simple.
+ */
+async function jsonPOSTRequest(URL, body) {
+  try {
+    var response = await fetch(URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body)
+    });
+    var jsonResponse = await response.json();
+    return jsonResponse;
+  } catch(error) {
+    return {};
+  }
+}
+
+async function getSchoolURLs(schoolName) {
+  try {
+    for (var i in serverDomains) {
+      var response = await jsonPOSTRequest("https://"+serverDomains[i]+schoolDetailsURL, {
+        schoolName: schoolName,
+      });
+      return [ response["d"]["Fqdn"], response["d"]["SchoolId"] ];
+    }
+  } catch(error) {
+    return null;
+  }
+}
+
+class CompassLogin {
+  /**
+   * Returns an array of school names.
+   */
+  async searchSchools(query) {
+    for (var i in serverDomains) {
+      var response = await jsonPOSTRequest("https://"+serverDomains[i]+schoolNameURL, {
+        keyword: query,
+      });
+      if (response["d"]) {
+        return response["d"];
+      } else {
+        console.log("Domain failed, trying remaining domains...")
+      }
+    }
+  }
+
+  async login(schoolName, user, pass) {
+    try {
+      var schoolNames = await getSchoolURLs(schoolName);
+      var compassURL = schoolNames[0];
+      var schoolURL = schoolNames[1];
+      var response = await jsonPOSTRequest("https://"+compassURL+apiKeyURL, {
+        schoolId: schoolURL,
+        password: pass,
+        sussiId: user,
+      });
+      if (response["d"]) {
+        return response["d"];
+      } else {
+        console.log("Incorrect username or password for Compass.");
+      }
+    } catch(error) {
+      console.log("Error logging into Compass.");
+    }
+  }
+}
+
+export { CompassLogin, CompassAPI };
