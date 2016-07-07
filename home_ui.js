@@ -19,6 +19,7 @@ import { SchoolSelectionView } from "./login_ui";
 const compassAPI = new CompassAPI();
 var ScrollableTabView = require("react-native-scrollable-tab-view");
 import { Button, Card } from 'react-native-material-design';
+import renderIf from "render-if";
 
 class NewsView extends Component {
   async refresh() {
@@ -48,9 +49,16 @@ class NewsView extends Component {
           </Card.Body>
         </Card>)});
     return (
-      <ScrollView>
-        { cardArray }
-      </ScrollView>
+      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+        {renderIf(this.state.items.length > 0)(
+          <ScrollView>
+            {cardArray}
+          </ScrollView>
+        )}
+        {renderIf(this.state.items.length === 0)(
+          <Text style={{fontSize: 36, textAlign: "center"}}>No items.</Text>
+        )}
+      </View>
     );
   }
 }
@@ -80,9 +88,16 @@ class ScheduleView extends Component {
           </Card.Body>
         </Card>)});
     return (
-      <ScrollView>
-        {cardArray}
-      </ScrollView>
+      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+        {renderIf(this.state.items.length > 0)(
+          <ScrollView>
+            {cardArray}
+          </ScrollView>
+        )}
+        {renderIf(this.state.items.length === 0)(
+          <Text style={{fontSize: 28, textAlign: "center"}}>There's nothing on today.</Text>
+        )}
+      </View>
     );
   }
 }
