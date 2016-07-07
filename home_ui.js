@@ -83,8 +83,17 @@ class ScheduleView extends Component {
   render() {
     let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
           <Card.Body>
-            <Text style={{fontSize: 26}}>{item["UploadedBy"]}</Text>
-            <Text>{item["Content"]}</Text>
+            <Text style={{fontSize: 26}}>{item["SubjectShort"]}</Text>
+            <Text>{item["ActivityName"]}</Text>
+            <Text>{item["Start"]+" - "+item["Finish"]}</Text>
+            {renderIf(item["OldLocation"] !== "")(
+              <Text style={{textDecorationLine: "line-through"}}>{item["OldLocation"]}</Text>
+            )}
+            <Text>{item["Location"]}</Text>
+            <Text style={{textDecorationLine: item["CoveringManager"] !== "" ? "line-through" : "none"}}>{item["OriginalManager"]}</Text>
+            {renderIf(item["CoveringManager"] !== "")(
+              <Text>{item["CoveringManager"]}</Text>
+            )}
           </Card.Body>
         </Card>)});
     return (
