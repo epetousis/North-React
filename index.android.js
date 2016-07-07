@@ -16,7 +16,7 @@ import YANavigator from 'react-native-ya-navigator';
 
 import { CompassLogin, CompassAPI } from "./compass_api";
 import { LoginView, SchoolSelectionView } from "./login_ui";
-import HomeView from "./home_ui";
+import MainTabbedView from "./home_ui";
 
 class North extends Component {
   render() {
@@ -25,7 +25,7 @@ class North extends Component {
       <StatusBar backgroundColor="#1E5E87" barStyle="light-content" />
       <YANavigator ref="navigator"
       initialRoute={{
-        component: HomeView,
+        component: MainTabbedView,
       }}
       navBarStyle={{
         backgroundColor: '#2980b9',
