@@ -23,11 +23,14 @@ import { Button, Card } from 'react-native-material-design';
 class NewsView extends Component {
   async refresh() {
     var homeFeed = await compassAPI.homeContent();
-    var newsItems = homeFeed["news"];
-    console.log(newsItems);
-    this.setState({
-      items: newsItems
-    });
+    if (homeFeed) {
+      var newsItems = homeFeed["news"];
+      this.setState({
+        items: newsItems
+      });
+    } else {
+      console.log("Could not refresh home feed. Are you logged in?");
+    }
   }
   constructor(props, context) {
     super(props, context);
@@ -50,6 +53,38 @@ class NewsView extends Component {
 }
 
 class ScheduleView extends Component {
+  async refresh() {
+    var homeFeed = await compassAPI.homeContent();
+    if (homeFeed) {
+      var scheduleItems = homeFeed["schedule"];
+      this.setState({
+        items: scheduleItems
+      });
+    } else {
+      console.log("Could not refresh today's schedule. Are you logged in?");
+    }
+  }
+  constructor(props, context) {
+    super(props, context);
+    this.state = {items:[]}
+    this.refresh();
+  }
+  render() {
+    let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
+          <Card.Body>
+            <Text style={{fontSize: 26}}>{item["UploadedBy"]}</Text>
+            <Text>{item["Content"]}</Text>
+          </Card.Body>
+        </Card>)});
+    return (
+      <ScrollView>
+        {cardArray}
+      </ScrollView>
+    );
+  }
+}
+
+class DebugView extends Component {
   logOut() {
     compassAPI.logOut();
     this.props.navigator.push({component: SchoolSelectionView});
@@ -65,8 +100,12 @@ class MainTabbedView extends Component {
   async checkCompassApi() {
     var apiKey = await compassAPI.retrieveSettings();
     if (!apiKey) {
-      this.props.navigator.push({component: SchoolSelectionView});
+      this.props.navigator.push({component: SchoolSelectionView, props: {mainView: this}});
     }
+  }
+  refresh() {
+    this.refs.newsView.refresh();
+    this.refs.scheduleView.refresh();
   }
   constructor(props, context) {
     super(props, context);
@@ -82,8 +121,9 @@ class MainTabbedView extends Component {
     return (
       <YANavigator.Scene delegate={this} style={styles.container}>
         <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="white" tabBarInactiveTextColor="white" >
-          <NewsView tabLabel="News" {...this.props} />
-          <ScheduleView tabLabel="Schedule" {...this.props} />
+          <NewsView ref="newsView" tabLabel="News" {...this.props} />
+          <ScheduleView ref="scheduleView" tabLabel="Schedule" {...this.props} />
+          <DebugView ref="debugView" tabLabel="Debug" {...this.props} />
         </ScrollableTabView>
       </YANavigator.Scene>
     );
