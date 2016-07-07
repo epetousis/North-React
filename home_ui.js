@@ -40,7 +40,10 @@ class NewsView extends Component {
   render() {
     let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
           <Card.Body>
-            <Text style={{fontSize: 26}}>{item["UploadedBy"]}</Text>
+            <View style={{flexDirection:"row", flexWrap:"nowrap", alignItems:"center", justifyContent:"center", marginBottom: 10}}>
+            <Text style={{fontSize: 26, flex:1}}>{item["UploadedBy"]}</Text>
+            <Image source={{uri: "https://"+compassAPI.compassURL+item["UserImageUrl"]}} style={{width:76, height:76, borderRadius: 38}} />
+            </View>
             <Text>{item["Content"]}</Text>
           </Card.Body>
         </Card>)});
