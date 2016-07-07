@@ -52,6 +52,7 @@ class CompassAPI {
   }
 
   async homeContent() {
+    await this.retrieveSettings();
     try {
       var homeContent = await jsonPOSTRequest("https://"+this.compassURL+"/services/ios.svc/getcontent", {}, this.apiKey);
       return homeContent["d"];

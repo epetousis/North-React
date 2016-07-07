@@ -9,23 +9,42 @@ import {
   RecyclerViewBackedScrollView,
   TouchableHighlight,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Image,
+  ScrollView
 } from "react-native";
 import YANavigator from 'react-native-ya-navigator';
-import Button from "apsl-react-native-button";
 import { CompassAPI } from "./compass_api";
 import { SchoolSelectionView } from "./login_ui";
 const compassAPI = new CompassAPI();
 var ScrollableTabView = require("react-native-scrollable-tab-view");
+import { Button, Card } from 'react-native-material-design';
 
 class NewsView extends Component {
-  logOut() {
-    compassAPI.logOut();
-    this.props.navigator.push({component: SchoolSelectionView});
+  async refresh() {
+    var homeFeed = await compassAPI.homeContent();
+    var newsItems = homeFeed["news"];
+    console.log(newsItems);
+    this.setState({
+      items: newsItems
+    });
+  }
+  constructor(props, context) {
+    super(props, context);
+    this.state = {items:[]}
+    this.refresh();
   }
   render() {
+    let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
+          <Card.Body>
+            <Text style={{fontSize: 26}}>{item["UploadedBy"]}</Text>
+            <Text>{item["Content"]}</Text>
+          </Card.Body>
+        </Card>)});
     return (
-      <Button style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
+      <ScrollView>
+        { cardArray }
+      </ScrollView>
     );
   }
 }
@@ -37,15 +56,14 @@ class ScheduleView extends Component {
   }
   render() {
     return (
-      <Button style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
+      <Button text="Log out" style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
     );
   }
 }
 
 class MainTabbedView extends Component {
   async checkCompassApi() {
-    var compass = new CompassAPI();
-    var apiKey = await compass.retrieveSettings();
+    var apiKey = await compassAPI.retrieveSettings();
     if (!apiKey) {
       this.props.navigator.push({component: SchoolSelectionView});
     }
