@@ -32,7 +32,7 @@ class HomeView extends Component {
   static navigationDelegate = {
     id: "homeScene",
     renderTitle(props) {
-      return <Text style={{fontSize: 18, color: "#ffffff"}}>Home</Text>
+      return <Text style={{fontSize: 18, color: "#ffffff"}}>North</Text>
     }
   }
   logOut() {
