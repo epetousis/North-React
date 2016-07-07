@@ -17,42 +17,47 @@ import { AsyncStorage } from "react-native";
  * Send a JSON request, get a JSON response. Simple.
  */
 async function jsonPOSTRequest(URL, body, apiKey?) {
-  try {
-    var headers = { "Content-Type": "application/json", };
-    if (apiKey) {
-      headers.addObject("CompassApiKey", apiKey);
-    }
-    var response = await fetch(URL, {
-      method: "POST",
-      headers: headers,
-      body: JSON.stringify(body)
-    });
-    var jsonResponse = await response.json();
-    return jsonResponse;
-  } catch(error) {
-    return {};
+  var headers = { "Content-Type": "application/json", };
+  if (apiKey) {
+    headers["CompassApiKey"] = apiKey;
   }
+  var response = await fetch(URL, {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify(body)
+  });
+  var jsonResponse = await response.json();
+  return jsonResponse;
 }
 
 class CompassAPI {
-  async retrieveApiKey() {
+  async retrieveSettings() {
     var apiKey = await AsyncStorage.getItem("@North:apiKey");
-    if (apiKey !== null) {
+    var compassURL = await AsyncStorage.getItem("@North:compassURL");
+    if (apiKey !== null && compassURL !== null) {
       this.apiKey = apiKey;
-      return apiKey;
+      this.compassURL = compassURL;
+      return [apiKey, compassURL];
     }
+    return null;
   }
 
   async logOut() {
     await AsyncStorage.setItem("@North:apiKey", "");
+    await AsyncStorage.setItem("@North:compassURL", "");
   }
 
   constructor() {
-    this.retrieveApiKey();
+    this.retrieveSettings();
   }
 
   async homeContent() {
-    // to do
+    try {
+      var homeContent = await jsonPOSTRequest("https://"+this.compassURL+"/services/ios.svc/getcontent", {}, this.apiKey);
+      return homeContent["d"];
+    } catch(error) {
+      console.log("An error occurred while retrieving home page content.")
+    }
   }
 }
 
@@ -106,6 +111,7 @@ class CompassLogin {
         sussiId: user,
       });
       if (response["d"]) {
+        await AsyncStorage.setItem("@North:compassURL", compassURL);
         await AsyncStorage.setItem("@North:apiKey", response["d"]);
         return response["d"];
       } else {

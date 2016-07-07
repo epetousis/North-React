@@ -16,11 +16,36 @@ import Button from "apsl-react-native-button";
 import { CompassAPI } from "./compass_api";
 import { SchoolSelectionView } from "./login_ui";
 const compassAPI = new CompassAPI();
+var ScrollableTabView = require("react-native-scrollable-tab-view");
 
-class HomeView extends Component {
+class NewsView extends Component {
+  logOut() {
+    compassAPI.logOut();
+    this.props.navigator.push({component: SchoolSelectionView});
+  }
+  render() {
+    return (
+      <Button style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
+    );
+  }
+}
+
+class ScheduleView extends Component {
+  logOut() {
+    compassAPI.logOut();
+    this.props.navigator.push({component: SchoolSelectionView});
+  }
+  render() {
+    return (
+      <Button style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
+    );
+  }
+}
+
+class MainTabbedView extends Component {
   async checkCompassApi() {
     var compass = new CompassAPI();
-    var apiKey = await compass.retrieveApiKey();
+    var apiKey = await compass.retrieveSettings();
     if (!apiKey) {
       this.props.navigator.push({component: SchoolSelectionView});
     }
@@ -30,19 +55,18 @@ class HomeView extends Component {
     this.checkCompassApi();
   }
   static navigationDelegate = {
-    id: "homeScene",
+    id: "tabbedViewScene",
     renderTitle(props) {
       return <Text style={{fontSize: 18, color: "#ffffff"}}>North</Text>
     }
   }
-  logOut() {
-    compassAPI.logOut();
-    this.props.navigator.push({component: SchoolSelectionView});
-  }
   render() {
     return (
       <YANavigator.Scene delegate={this} style={styles.container}>
-      <Button style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
+        <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="white" tabBarInactiveTextColor="white" >
+          <NewsView tabLabel="News" {...this.props} />
+          <ScheduleView tabLabel="Schedule" {...this.props} />
+        </ScrollableTabView>
       </YANavigator.Scene>
     );
   }
@@ -84,4 +108,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeView;
+export default MainTabbedView;
