@@ -23,11 +23,15 @@ import { Button, Card } from 'react-native-material-design';
 class NewsView extends Component {
   async refresh() {
     var homeFeed = await compassAPI.homeContent();
-    var newsItems = homeFeed["news"];
-    console.log(newsItems);
-    this.setState({
-      items: newsItems
-    });
+    if (homeFeed) {
+      var newsItems = homeFeed["news"];
+      console.log(newsItems);
+      this.setState({
+        items: newsItems
+      });
+    } else {
+      console.log("Could not refresh home feed. Are you logged in?");
+    }
   }
   constructor(props, context) {
     super(props, context);
@@ -65,8 +69,12 @@ class MainTabbedView extends Component {
   async checkCompassApi() {
     var apiKey = await compassAPI.retrieveSettings();
     if (!apiKey) {
-      this.props.navigator.push({component: SchoolSelectionView});
+      this.props.navigator.push({component: SchoolSelectionView, props: {mainView: this}});
     }
+  }
+  refresh() {
+    this.refs.newsView.refresh();
+    this.refs.scheduleView.refresh();
   }
   constructor(props, context) {
     super(props, context);
@@ -82,8 +90,8 @@ class MainTabbedView extends Component {
     return (
       <YANavigator.Scene delegate={this} style={styles.container}>
         <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="white" tabBarInactiveTextColor="white" >
-          <NewsView tabLabel="News" {...this.props} />
-          <ScheduleView tabLabel="Schedule" {...this.props} />
+          <NewsView ref="newsView" tabLabel="News" {...this.props} />
+          <ScheduleView ref="scheduleView" tabLabel="Schedule" {...this.props} />
         </ScrollableTabView>
       </YANavigator.Scene>
     );
