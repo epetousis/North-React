@@ -11,32 +11,48 @@ let serverDomains = ["cl1.vic.jdlf.com.au",
 "lbmr1.vic.jdlf.com.au",
 "ed1.vic.jdlf.com.au"]
 
-class CompassAPI {
-  constructor(apiKey) {
-    this.apiKey = apiKey;
-  }
-
-  async homeContent() {
-    // to do
-  }
-}
+import { AsyncStorage } from "react-native";
 
 /**
  * Send a JSON request, get a JSON response. Simple.
  */
-async function jsonPOSTRequest(URL, body) {
+async function jsonPOSTRequest(URL, body, apiKey?) {
   try {
+    var headers = { "Content-Type": "application/json", };
+    if (apiKey) {
+      headers.addObject("CompassApiKey", apiKey);
+    }
     var response = await fetch(URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: headers,
       body: JSON.stringify(body)
     });
     var jsonResponse = await response.json();
     return jsonResponse;
   } catch(error) {
     return {};
+  }
+}
+
+class CompassAPI {
+  async retrieveApiKey() {
+    var apiKey = await AsyncStorage.getItem("@North:apiKey");
+    if (apiKey !== null) {
+      this.apiKey = apiKey;
+      return apiKey;
+    }
+  }
+
+  async logOut() {
+    await AsyncStorage.setItem("@North:apiKey", "");
+  }
+
+  constructor() {
+    this.retrieveApiKey();
+  }
+
+  async homeContent() {
+    // to do
   }
 }
 
@@ -90,6 +106,7 @@ class CompassLogin {
         sussiId: user,
       });
       if (response["d"]) {
+        await AsyncStorage.setItem("@North:apiKey", response["d"]);
         return response["d"];
       } else {
         console.log("Incorrect username or password for Compass.");

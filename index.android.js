@@ -16,15 +16,16 @@ import YANavigator from 'react-native-ya-navigator';
 
 import { CompassLogin, CompassAPI } from "./compass_api";
 import { LoginView, SchoolSelectionView } from "./login_ui";
+import HomeView from "./home_ui";
 
 class North extends Component {
   render() {
     return (
       <View style={{flex: 1}}>
       <StatusBar backgroundColor="#1E5E87" barStyle="light-content" />
-      <YANavigator
+      <YANavigator ref="navigator"
       initialRoute={{
-        component: SchoolSelectionView,
+        component: HomeView,
       }}
       navBarStyle={{
         backgroundColor: '#2980b9',

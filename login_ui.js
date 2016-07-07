@@ -9,20 +9,19 @@ import {
   ListView,
   RecyclerViewBackedScrollView,
   TouchableHighlight,
+  TouchableNativeFeedback,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Platform,
+  Navigator
 } from "react-native";
-import Button from "apsl-react-native-button";
 import { CompassLogin, CompassAPI } from "./compass_api";
-var test = new CompassLogin();
+const loginObject = new CompassLogin();
 import YANavigator from 'react-native-ya-navigator';
 
 class SchoolSelectionView extends Component {
-  test() {
-    alert("hi")
-  }
   async performSearchAndReload(query) {
-    var list = await test.searchSchools(query);
+    var list = await loginObject.searchSchools(query);
     this.setState({
       dataSource: this.ds.cloneWithRows(list),
     });
@@ -34,24 +33,37 @@ class SchoolSelectionView extends Component {
       dataSource: this.ds,
     }
   }
+  _pressRow(sectionID, rowID, rowData, highlightRow) {
+    this.props.navigator.push({
+      component: LoginView,
+      props: {
+        school: rowData
+      }
+    });
+    highlightRow(sectionID, rowID);
+  }
   _renderRow(rowData: string, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
-    return (
-    <TouchableHighlight underlayColor="#cccccc" onPress={() => {
-      this.props.navigator.push({
-        component: LoginView,
-        props: {
-          school: rowData
-        }
-      });
-      highlightRow(sectionID, rowID);
-      }}>
-      <View>
-      <Text style={styles.row}>
-        {rowData}
-      </Text>
-      </View>
-    </TouchableHighlight>
-    );
+    if (Platform.OS === "android") {
+      return (
+        <TouchableNativeFeedback underlayColor="#cccccc" onPress={() => {this._pressRow(sectionID, rowID, rowData, highlightRow)}}>
+          <View>
+          <Text style={styles.row}>
+            {rowData}
+          </Text>
+          </View>
+        </TouchableNativeFeedback>
+      );
+    } else {
+      return (
+        <TouchableHighlight underlayColor="#cccccc" onPress={() => {this._pressRow(sectionID, rowID, rowData, highlightRow)}}>
+          <View>
+          <Text style={styles.row}>
+            {rowData}
+          </Text>
+          </View>
+        </TouchableHighlight>
+      );
+    }
   }
   _renderSeperator(sectionID: number, rowID: number, adjacentRowHighlighted: bool) {
     return (
@@ -66,8 +78,12 @@ class SchoolSelectionView extends Component {
   }
   static navigationDelegate = {
     id: "schoolSelectScene",
+    sceneConfig: Platform.OS === 'ios' && Navigator.SceneConfigs.FloatFromBottom,
     renderTitle(props) {
       return <Text style={{fontSize: 18, color: "#ffffff"}}>Select your school</Text>
+    },
+    renderNavBarLeftPart() {
+      return null;
     }
   }
   render() {
@@ -110,12 +126,12 @@ class LoginView extends Component {
     this.setState({
       progressHUD: (<ProgressHUD />)
     });
-    var compassLogin = new CompassLogin();
-    var apiKey = await compassLogin.login(this.props.school, this.state.username, this.state.password);
+    var apiKey = await loginObject.login(this.props.school, this.state.username, this.state.password);
     if (apiKey) {
       this.setState({
         progressHUD: (<View />)
       });
+      this.props.navigator.popToTop();
     } else {
       alert("An error occurred while logging into Compass.");
     }
