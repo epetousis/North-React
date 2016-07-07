@@ -6,12 +6,12 @@
     "start": "node node_modules/react-native/local-cli/cli.js start"
   },
   "dependencies": {
-    "apsl-react-native-button": "^2.5.0",
     "react": "15.2.0",
     "react-native": "0.28.0",
     "react-native-material-design": "^0.3.6",
     "react-native-scrollable-tab-view": "^0.5.2",
     "react-native-vector-icons": "^2.0.3",
-    "react-native-ya-navigator": "^0.6.10"
+    "react-native-ya-navigator": "^0.6.10",
+    "render-if": "^0.1.1"
   }
 }
