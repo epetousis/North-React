@@ -51,7 +51,7 @@ class NewsView extends Component {
           </Card.Body>
         </Card>)});
     return (
-      <ScrollView contentContainerStyle={{flex: 1}} refreshControl={
+      <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
       }>
         {cardArray}
@@ -101,7 +101,7 @@ class ScheduleView extends Component {
           </Card.Body>
         </Card>)});
     return (
-      <ScrollView contentContainerStyle={{flex: 1}} refreshControl={
+      <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
       }>
         {cardArray}
