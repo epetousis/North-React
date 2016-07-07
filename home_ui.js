@@ -9,7 +9,7 @@ import {
   RecyclerViewBackedScrollView,
   TouchableHighlight,
   Alert,
-  ActivityIndicator,
+  RefreshControl,
   Image,
   ScrollView
 } from "react-native";
@@ -23,11 +23,13 @@ import renderIf from "render-if";
 
 class NewsView extends Component {
   async refresh() {
+    this.setState({refreshing: true});
     var homeFeed = await compassAPI.homeContent();
     if (homeFeed) {
       var newsItems = homeFeed["news"];
       this.setState({
-        items: newsItems
+        items: newsItems,
+        refreshing: false
       });
     } else {
       console.log("Could not refresh home feed. Are you logged in?");
@@ -35,7 +37,7 @@ class NewsView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[]}
+    this.state = {items:[], refreshing: false}
     this.refresh();
   }
   render() {
@@ -49,27 +51,29 @@ class NewsView extends Component {
           </Card.Body>
         </Card>)});
     return (
-      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-        {renderIf(this.state.items.length > 0)(
-          <ScrollView>
-            {cardArray}
-          </ScrollView>
-        )}
+      <ScrollView contentContainerStyle={{flex: 1}} refreshControl={
+        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
+      }>
+        {cardArray}
         {renderIf(this.state.items.length === 0)(
-          <Text style={{fontSize: 36, textAlign: "center"}}>No items.</Text>
+          <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+            <Text style={{fontSize: 28, textAlign: "center"}}>No items.</Text>
+          </View>
         )}
-      </View>
+      </ScrollView>
     );
   }
 }
 
 class ScheduleView extends Component {
   async refresh() {
+    this.setState({refreshing: true});
     var homeFeed = await compassAPI.homeContent();
     if (homeFeed) {
       var scheduleItems = homeFeed["schedule"];
       this.setState({
-        items: scheduleItems
+        items: scheduleItems,
+        refreshing: false
       });
     } else {
       console.log("Could not refresh today's schedule. Are you logged in?");
@@ -77,7 +81,7 @@ class ScheduleView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[]}
+    this.state = {items:[], refreshing: false}
     this.refresh();
   }
   render() {
@@ -97,16 +101,16 @@ class ScheduleView extends Component {
           </Card.Body>
         </Card>)});
     return (
-      <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-        {renderIf(this.state.items.length > 0)(
-          <ScrollView>
-            {cardArray}
-          </ScrollView>
-        )}
+      <ScrollView contentContainerStyle={{flex: 1}} refreshControl={
+        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
+      }>
+        {cardArray}
         {renderIf(this.state.items.length === 0)(
-          <Text style={{fontSize: 28, textAlign: "center"}}>There's nothing on today.</Text>
+          <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+            <Text style={{fontSize: 28, textAlign: "center"}}>There's nothing on today.</Text>
+          </View>
         )}
-      </View>
+      </ScrollView>
     );
   }
 }
