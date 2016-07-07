@@ -40,6 +40,11 @@ async function jsonPOSTRequest(URL, body) {
   }
 }
 
+/**
+ * Returns an array with the two URLs required to log
+ * into Compass: the Compass domain and the school
+ * website.
+ */
 async function getSchoolURLs(schoolName) {
   try {
     for (var i in serverDomains) {
@@ -70,6 +75,10 @@ class CompassLogin {
     }
   }
 
+  /**
+   * Returns an API key from Compass to be associated with
+   * all requests.
+   */
   async login(schoolName, user, pass) {
     try {
       var schoolNames = await getSchoolURLs(schoolName);
