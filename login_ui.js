@@ -37,7 +37,8 @@ class SchoolSelectionView extends Component {
     this.props.navigator.push({
       component: LoginView,
       props: {
-        school: rowData
+        school: rowData,
+        mainView: this.props.mainView
       }
     });
     highlightRow(sectionID, rowID);
@@ -132,6 +133,7 @@ class LoginView extends Component {
         progressHUD: (<View />)
       });
       this.props.navigator.popToTop();
+      this.props.mainView.refresh();
     } else {
       alert("An error occurred while logging into Compass.");
     }
