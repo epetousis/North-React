@@ -16,7 +16,7 @@ import { AsyncStorage } from "react-native";
 /**
  * Send a JSON request, get a JSON response. Simple.
  */
-async function jsonPOSTRequest(URL, body, apiKey?) {
+async function jsonPOSTRequest(URL, body, apiKey) {
   var headers = { "Content-Type": "application/json", };
   if (apiKey) {
     headers["CompassApiKey"] = apiKey;
@@ -68,6 +68,27 @@ class CompassAPI {
       return tasks["d"];
     } catch(error) {
       console.log("An error occurred while retrieving learning tasks.")
+    }
+  }
+
+  async userDetails() {
+    await this.retrieveSettings();
+    try {
+      var userDetail = await jsonPOSTRequest("https://"+this.compassURL+"/services/ios.svc/getuserdetail", {}, this.apiKey);
+      return userDetail["d"];
+    } catch(error) {
+      console.log("An error occurred while retrieving user details.")
+    }
+  }
+
+  async scheduleForDate(date) {
+    await this.retrieveSettings();
+    try {
+      var userDetails = await this.userDetails();
+      var schedule = await jsonPOSTRequest("https://"+this.compassURL+"/services/ios.svc/getuserscheduleforday", {day:date, userId:userDetails["UserId"]}, this.apiKey);
+      return schedule["d"];
+    } catch(error) {
+      console.log("An error occurred while retrieving schedule.")
     }
   }
 }
