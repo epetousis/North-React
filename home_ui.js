@@ -41,7 +41,9 @@ class NewsView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[], refreshing: false}
+    this.state = {items:[], refreshing: false};
+  }
+  componentDidMount() {
     this.refresh();
   }
   render() {
@@ -87,7 +89,9 @@ class ScheduleView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[], refreshing: false, date: new Date(), showDatePicker: false}
+    this.state = {items:[], refreshing: false, date: new Date(), showDatePicker: false};
+  }
+  componentDidMount() {
     this.refresh();
   }
   async onDateChange(date) {
@@ -161,7 +165,9 @@ class LearningTasksView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[], refreshing: false}
+    this.state = {items:[], refreshing: false};
+  }
+  componentDidMount() {
     this.refresh();
   }
   statusColour(dueDateString, student) {
