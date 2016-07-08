@@ -152,7 +152,7 @@ class MainTabbedView extends Component {
   render() {
     return (
       <YANavigator.Scene delegate={this} style={styles.container}>
-        <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="#ffffff" tabBarInactiveTextColor="#cccccc" renderTabBar={() => <IconTabBar />} >
+        <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="#000" tabBarInactiveTextColor="#aaa" renderTabBar={() => <IconTabBar />} >
           <NewsView ref="newsView" tabLabel="ios-paper" {...this.props} />
           <ScheduleView ref="scheduleView" tabLabel="ios-clock" {...this.props} />
           <DebugView ref="debugView" tabLabel="ios-questionmark" {...this.props} />
