@@ -155,7 +155,7 @@ class MainTabbedView extends Component {
         <ScrollableTabView tabBarBackgroundColor="#fefefe" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="#000" tabBarInactiveTextColor="#aaa" tabBarPosition="bottom" renderTabBar={() => <IconTabBar drawTopBorder="true" />} >
           <NewsView ref="newsView" tabLabel="ios-paper" {...this.props} />
           <ScheduleView ref="scheduleView" tabLabel="ios-clock" {...this.props} />
-          <DebugView ref="debugView" tabLabel="ios-questionmark" {...this.props} />
+          <DebugView ref="debugView" tabLabel="md-help" {...this.props} />
         </ScrollableTabView>
       </YANavigator.Scene>
     );
