@@ -86,8 +86,8 @@ class ScheduleView extends Component {
     this.state = {items:[], refreshing: false, date: new Date(), showDatePicker: false}
     this.refresh();
   }
-  onDateChange(date) {
-    this.setState({date: date});
+  async onDateChange(date) {
+    await this.setState({date: date});
     this.refresh();
   }
   render() {
