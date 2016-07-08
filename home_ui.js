@@ -25,7 +25,9 @@ import IconTabBar from "./icon_tab_bar";
 
 class NewsView extends Component {
   async refresh() {
-    this.state = {items:[], refreshing: true}
+    this.setState({
+      refreshing: true
+    });
     var homeFeed = await compassAPI.homeContent();
     if (homeFeed) {
       var newsItems = homeFeed["news"];
@@ -70,7 +72,9 @@ class NewsView extends Component {
 
 class ScheduleView extends Component {
   async refresh() {
-    this.state = {items:[], refreshing: true, date: this.state.date, showDatePicker: this.state.showDatePicker}
+    this.setState({
+      refreshing: true
+    });
     var schedule = await compassAPI.scheduleForDate(this.state.date.toISOString().substring(0,10));
     if (schedule) {
       this.setState({
@@ -142,7 +146,9 @@ class DebugView extends Component {
 
 class LearningTasksView extends Component {
   async refresh() {
-    this.state = {items:[], refreshing: true}
+    this.setState({
+      refreshing: true
+    });
     var learningTasks = await compassAPI.learningTasks();
     if (learningTasks) {
       this.setState({
