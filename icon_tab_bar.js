@@ -72,7 +72,6 @@ const IconTabBar = React.createClass({
   },
 
   render() {
-    console.log(this.props);
     return <View style={[styles.tabs, this.props.style, {backgroundColor: this.props.backgroundColor}]}>
       {this.props.tabs.map((tab, i) => {
         return <TouchableOpacity key={tab} onPress={() => this.props.goToPage(i)} style={styles.tab}>
