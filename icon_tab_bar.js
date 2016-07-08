@@ -72,7 +72,7 @@ const IconTabBar = React.createClass({
   },
 
   render() {
-    return <View style={[styles.tabs, this.props.style, {backgroundColor: this.props.backgroundColor}]}>
+    return <View style={[styles.tabs, this.props.style, {backgroundColor: this.props.backgroundColor, borderTopWidth: (this.props.drawTopBorder === "true") ? 1 : 0}]}>
       {this.props.tabs.map((tab, i) => {
         return <TouchableOpacity key={tab} onPress={() => this.props.goToPage(i)} style={styles.tab}>
           <Icon
@@ -101,10 +101,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 5,
     borderWidth: 1,
-    borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,
     borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderTopColor: 'rgba(0,0,0,0.05)',
   },
 });
 
