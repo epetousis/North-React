@@ -20,6 +20,7 @@ const compassAPI = new CompassAPI();
 var ScrollableTabView = require("react-native-scrollable-tab-view");
 import { Button, Card } from 'react-native-material-design';
 import renderIf from "render-if";
+import IconTabBar from "./icon_tab_bar";
 
 class NewsView extends Component {
   async refresh() {
@@ -151,10 +152,10 @@ class MainTabbedView extends Component {
   render() {
     return (
       <YANavigator.Scene delegate={this} style={styles.container}>
-        <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="white" tabBarInactiveTextColor="white" >
-          <NewsView ref="newsView" tabLabel="News" {...this.props} />
-          <ScheduleView ref="scheduleView" tabLabel="Schedule" {...this.props} />
-          <DebugView ref="debugView" tabLabel="Debug" {...this.props} />
+        <ScrollableTabView tabBarBackgroundColor="#2980b9" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="#ffffff" tabBarInactiveTextColor="#cccccc" renderTabBar={() => <IconTabBar />} >
+          <NewsView ref="newsView" tabLabel="ios-paper" {...this.props} />
+          <ScheduleView ref="scheduleView" tabLabel="ios-clock" {...this.props} />
+          <DebugView ref="debugView" tabLabel="ios-questionmark" {...this.props} />
         </ScrollableTabView>
       </YANavigator.Scene>
     );
