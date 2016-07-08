@@ -108,18 +108,18 @@ class ScheduleView extends Component {
         </Card>)});
     return (
       <View style={{flex: 1}}>
-      <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
-        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
-      }>
-        <Button text={this.state.date.toDateString()} onPress={() => this.setState({showDatePicker: !this.state.showDatePicker})} />
-        {cardArray}
-        {renderIf(this.state.items.length === 0)(
-          <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-            <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>There's nothing on this date.</Text>
-            <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new classes.</Text>
-          </View>
-        )}
-      </ScrollView>
+        <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
+          <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
+        }>
+          <Button text={this.state.date.toDateString()} onPress={() => this.setState({showDatePicker: !this.state.showDatePicker})} />
+          {cardArray}
+          {renderIf(this.state.items.length === 0)(
+            <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+              <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>There's nothing on this date.</Text>
+              <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new classes.</Text>
+            </View>
+          )}
+        </ScrollView>
         {renderIf(this.state.showDatePicker)(
           <DatePickerIOS date={this.state.date} mode="date" onDateChange={this.onDateChange.bind(this)} />
         )}
