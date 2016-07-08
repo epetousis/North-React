@@ -58,7 +58,8 @@ class NewsView extends Component {
         {cardArray}
         {renderIf(this.state.items.length === 0)(
           <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-            <Text style={{fontSize: 28, textAlign: "center"}}>No items.</Text>
+            <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>No news items.</Text>
+            <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new items.</Text>
           </View>
         )}
       </ScrollView>
@@ -108,7 +109,8 @@ class ScheduleView extends Component {
         {cardArray}
         {renderIf(this.state.items.length === 0)(
           <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-            <Text style={{fontSize: 28, textAlign: "center"}}>There's nothing on today.</Text>
+            <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>There's nothing on today.</Text>
+            <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new classes.</Text>
           </View>
         )}
       </ScrollView>
