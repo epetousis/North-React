@@ -23,7 +23,7 @@ import renderIf from "render-if";
 
 class NewsView extends Component {
   async refresh() {
-    this.setState({refreshing: true});
+    this.state = {items:[], refreshing: true}
     var homeFeed = await compassAPI.homeContent();
     if (homeFeed) {
       var newsItems = homeFeed["news"];
@@ -67,7 +67,7 @@ class NewsView extends Component {
 
 class ScheduleView extends Component {
   async refresh() {
-    this.setState({refreshing: true});
+    this.state = {items:[], refreshing: true}
     var homeFeed = await compassAPI.homeContent();
     if (homeFeed) {
       var scheduleItems = homeFeed["schedule"];
