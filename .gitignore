@@ -44,4 +44,4 @@ android/keystores/debug.keystore
 android/app/*.keystore
 
 # VS Code stuff
-.vscode/.react
+.vscode
