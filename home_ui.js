@@ -130,6 +130,78 @@ class DebugView extends Component {
   }
 }
 
+class LearningTasksView extends Component {
+  async refresh() {
+    this.state = {items:[], refreshing: true}
+    var learningTasks = await compassAPI.learningTasks();
+    if (learningTasks) {
+      this.setState({
+        items: learningTasks,
+        refreshing: false
+      });
+    } else {
+      console.log("Could not refresh home feed. Are you logged in?");
+    }
+  }
+  constructor(props, context) {
+    super(props, context);
+    this.state = {items:[], refreshing: false}
+    this.refresh();
+  }
+  statusColour(dueDateString, student) {
+    if (dueDateString !== "") {
+      var dueDate = new Date(dueDateString);
+      var today = new Date();
+      if (dueDate.getTime() - today.getTime() < 0) {
+        var overdue = true;
+      } else {
+        var overdue = false;
+      }
+    } else {
+      var overdue = false;
+    }
+
+    var submitted = student["submittedTimestamp"] !== "";
+    if (submitted) {
+      var submissionDate = new Date(student["submittedTimestamp"]);
+      var overdueSubmission = dueDate.getTime() - submissionDate.getTime() < 0;
+    }
+    if (overdue && !submitted) {
+      return "red";
+    } else if (overdueSubmission && submitted) {
+      return "yellow";
+    } else if (!overdue && !submitted) {
+      return "lightblue";
+    } else if (!overdueSubmission && submitted) {
+      return "green";
+    }
+  }
+  render() {
+    let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
+          <Card.Body>
+            <View style={{flexDirection:"row", flexWrap:"nowrap", alignItems:"center", justifyContent:"center", marginBottom: 10}}>
+            <Text style={{fontSize: 26, flex:1}}>{item["name"]}</Text>
+            <View style={{width:36, height:36, borderRadius: 18, backgroundColor: this.statusColour(item["dueDateTimestamp"], item["students"][0])}} />
+            </View>
+            <Text>{item["activityName"]}</Text>
+          </Card.Body>
+        </Card>)});
+    return (
+      <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
+        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
+      }>
+        {cardArray}
+        {renderIf(this.state.items.length === 0)(
+          <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+            <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>No learning tasks.</Text>
+            <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new learning tasks.</Text>
+          </View>
+        )}
+      </ScrollView>
+    );
+  }
+}
+
 class MainTabbedView extends Component {
   async checkCompassApi() {
     var apiKey = await compassAPI.retrieveSettings();
@@ -157,6 +229,7 @@ class MainTabbedView extends Component {
         <ScrollableTabView tabBarBackgroundColor="#fefefe" tabBarUnderlineColor="lightblue" tabBarActiveTextColor="#000" tabBarInactiveTextColor="#aaa" tabBarPosition="bottom" renderTabBar={() => <IconTabBar drawTopBorder="true" />} >
           <NewsView ref="newsView" tabLabel="ios-paper" {...this.props} />
           <ScheduleView ref="scheduleView" tabLabel="ios-clock" {...this.props} />
+          <LearningTasksView ref="learningTasksView" tabLabel="md-create" {...this.props} />
           <DebugView ref="debugView" tabLabel="md-help" {...this.props} />
         </ScrollableTabView>
       </YANavigator.Scene>

@@ -60,6 +60,16 @@ class CompassAPI {
       console.log("An error occurred while retrieving home page content.")
     }
   }
+
+  async learningTasks() {
+    await this.retrieveSettings();
+    try {
+      var tasks = await jsonPOSTRequest("https://"+this.compassURL+"/services/ios.svc/getLearningTasksWithSubmissionItems", {}, this.apiKey);
+      return tasks["d"];
+    } catch(error) {
+      console.log("An error occurred while retrieving learning tasks.")
+    }
+  }
 }
 
 /**
