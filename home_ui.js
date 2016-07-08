@@ -222,6 +222,7 @@ class MainTabbedView extends Component {
   refresh() {
     this.refs.newsView.refresh();
     this.refs.scheduleView.refresh();
+    this.refs.learningTasksView.refresh();
   }
   constructor(props, context) {
     super(props, context);
