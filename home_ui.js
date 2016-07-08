@@ -11,7 +11,8 @@ import {
   Alert,
   RefreshControl,
   Image,
-  ScrollView
+  ScrollView,
+  DatePickerIOS
 } from "react-native";
 import YANavigator from 'react-native-ya-navigator';
 import { CompassAPI } from "./compass_api";
@@ -69,12 +70,11 @@ class NewsView extends Component {
 
 class ScheduleView extends Component {
   async refresh() {
-    this.state = {items:[], refreshing: true}
-    var homeFeed = await compassAPI.homeContent();
-    if (homeFeed) {
-      var scheduleItems = homeFeed["schedule"];
+    this.state = {items:[], refreshing: true, date: this.state.date, showDatePicker: this.state.showDatePicker}
+    var schedule = await compassAPI.scheduleForDate(this.state.date.toISOString().substring(0,10));
+    if (schedule) {
       this.setState({
-        items: scheduleItems,
+        items: schedule,
         refreshing: false
       });
     } else {
@@ -83,7 +83,11 @@ class ScheduleView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[], refreshing: false}
+    this.state = {items:[], refreshing: false, date: new Date(), showDatePicker: false}
+    this.refresh();
+  }
+  onDateChange(date) {
+    this.setState({date: date});
     this.refresh();
   }
   render() {
@@ -103,17 +107,23 @@ class ScheduleView extends Component {
           </Card.Body>
         </Card>)});
     return (
+      <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
       }>
+        <Button text={this.state.date.toDateString()} onPress={() => this.setState({showDatePicker: !this.state.showDatePicker})} />
         {cardArray}
         {renderIf(this.state.items.length === 0)(
           <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-            <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>There's nothing on today.</Text>
+            <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>There's nothing on this date.</Text>
             <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new classes.</Text>
           </View>
         )}
       </ScrollView>
+        {renderIf(this.state.showDatePicker)(
+          <DatePickerIOS date={this.state.date} mode="date" onDateChange={this.onDateChange.bind(this)} />
+        )}
+      </View>
     );
   }
 }
