@@ -12,7 +12,9 @@ import {
   RefreshControl,
   Image,
   ScrollView,
-  DatePickerIOS
+  DatePickerIOS,
+  DatePickerAndroid,
+  Platform
 } from "react-native";
 import YANavigator from 'react-native-ya-navigator';
 import { CompassAPI } from "./compass_api";
@@ -89,14 +91,28 @@ class ScheduleView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[], refreshing: false, date: new Date(), showDatePicker: false};
+    this.state = {items:[], refreshing: false, date: new Date(), showiOSDatePicker: false};
   }
   componentDidMount() {
     this.refresh();
   }
-  async onDateChange(date) {
+  async changeDate(date) {
     await this.setState({date: date});
     this.refresh();
+  }
+  async toggleDatePicker() {
+    if (Platform.OS === "ios") {
+      this.setState({showiOSDatePicker: !this.state.showiOSDatePicker})
+    } else if (Platform.OS === "android") {
+      const {action, year, month, day} = await DatePickerAndroid.open({date: this.state.date});
+      if (action === DatePickerAndroid.dateSetAction) {
+        var date = new Date();
+        date.setFullYear(year);
+        date.setMonth(month);
+        date.setDate(day);
+        this.changeDate(date);
+      }
+    }
   }
   render() {
     let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
@@ -119,7 +135,7 @@ class ScheduleView extends Component {
         <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
         }>
-          <Button text={this.state.date.toDateString()} onPress={() => this.setState({showDatePicker: !this.state.showDatePicker})} />
+          <Button text={this.state.date.toDateString()} onPress={this.toggleDatePicker.bind(this)} />
           {cardArray}
           {renderIf(this.state.items.length === 0)(
             <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
@@ -128,8 +144,8 @@ class ScheduleView extends Component {
             </View>
           )}
         </ScrollView>
-        {renderIf(this.state.showDatePicker)(
-          <DatePickerIOS date={this.state.date} mode="date" onDateChange={this.onDateChange.bind(this)} />
+        {renderIf(this.state.showiOSDatePicker)(
+          <DatePickerIOS date={this.state.date} mode="date" onDateChange={this.changeDate.bind(this)} />
         )}
       </View>
     );
