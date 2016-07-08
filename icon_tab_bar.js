@@ -97,6 +97,8 @@ const styles = StyleSheet.create({
   tabs: {
     height: 45,
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: 5,
     borderWidth: 1,
     borderTopWidth: 0,
