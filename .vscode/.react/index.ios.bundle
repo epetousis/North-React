@@ -82866,9 +82866,9 @@ props,context));
 _this2.state={items:[],refreshing:false,date:new Date(),showDatePicker:false};
 _this2.refresh();return _this2;}babelHelpers.createClass(ScheduleView,[{key:"onDateChange",value:function onDateChange(
 
-date){
-this.setState({date:date});
-this.refresh();}},{key:"render",value:function render()
+date){return regeneratorRuntime.async(function onDateChange$(_context3){while(1){switch(_context3.prev=_context3.next){case 0:_context3.next=2;return regeneratorRuntime.awrap(
+this.setState({date:date}));case 2:
+this.refresh();case 3:case"end":return _context3.stop();}}},null,this);}},{key:"render",value:function render()
 
 {var _this3=this;
 var cardArray=this.state.items.map(function(item,index){return _react2.default.createElement(_reactNativeMaterialDesign.Card,{key:index,__source:{fileName:_jsxFileName,lineNumber:94}},
@@ -82923,14 +82923,14 @@ _react2.default.createElement(_reactNativeMaterialDesign.Button,{text:"Log out",
 LearningTasksView=function(_Component4){babelHelpers.inherits(LearningTasksView,_Component4);babelHelpers.createClass(LearningTasksView,[{key:"refresh",value:function refresh(){var
 
 
-learningTasks;return regeneratorRuntime.async(function refresh$(_context3){while(1){switch(_context3.prev=_context3.next){case 0:this.state={items:[],refreshing:true};_context3.next=3;return regeneratorRuntime.awrap(compassAPI.learningTasks());case 3:learningTasks=_context3.sent;
+learningTasks;return regeneratorRuntime.async(function refresh$(_context4){while(1){switch(_context4.prev=_context4.next){case 0:this.state={items:[],refreshing:true};_context4.next=3;return regeneratorRuntime.awrap(compassAPI.learningTasks());case 3:learningTasks=_context4.sent;
 if(learningTasks){
 this.setState({
 items:learningTasks,
 refreshing:false});}else
 
 {
-console.log("Could not refresh home feed. Are you logged in?");}case 5:case"end":return _context3.stop();}}},null,this);}}]);
+console.log("Could not refresh home feed. Are you logged in?");}case 5:case"end":return _context4.stop();}}},null,this);}}]);
 
 
 function LearningTasksView(props,context){babelHelpers.classCallCheck(this,LearningTasksView);var _this6=babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(LearningTasksView).call(this,
@@ -82994,9 +82994,9 @@ _react2.default.createElement(_reactNative.Text,{style:{fontSize:20,textAlign:"c
 
 MainTabbedView=function(_Component5){babelHelpers.inherits(MainTabbedView,_Component5);babelHelpers.createClass(MainTabbedView,[{key:"checkCompassApi",value:function checkCompassApi(){var
 
-apiKey;return regeneratorRuntime.async(function checkCompassApi$(_context4){while(1){switch(_context4.prev=_context4.next){case 0:_context4.next=2;return regeneratorRuntime.awrap(compassAPI.retrieveSettings());case 2:apiKey=_context4.sent;
+apiKey;return regeneratorRuntime.async(function checkCompassApi$(_context5){while(1){switch(_context5.prev=_context5.next){case 0:_context5.next=2;return regeneratorRuntime.awrap(compassAPI.retrieveSettings());case 2:apiKey=_context5.sent;
 if(!apiKey){
-this.props.navigator.push({component:_login_ui.SchoolSelectionView,props:{mainView:this}});}case 4:case"end":return _context4.stop();}}},null,this);}},{key:"refresh",value:function refresh()
+this.props.navigator.push({component:_login_ui.SchoolSelectionView,props:{mainView:this}});}case 4:case"end":return _context5.stop();}}},null,this);}},{key:"refresh",value:function refresh()
 
 
 {
