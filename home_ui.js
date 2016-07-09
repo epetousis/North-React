@@ -51,8 +51,11 @@ class NewsView extends Component {
   render() {
     let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
           <Card.Body>
-            <View style={{flexDirection:"row", flexWrap:"nowrap", alignItems:"center", justifyContent:"center", marginBottom: 10}}>
-            <Text style={{fontSize: 26, flex:1}}>{item["UploadedBy"]}</Text>
+            <View style={styles.cardHeader}>
+            <View style={{flex: 1}}>
+            <Text style={{fontSize: 21, marginBottom: 5}}>{item["Title"]}</Text>
+            <Text style={{fontSize: 18, marginBottom: 10}}>By {item["UploadedBy"]}</Text>
+            </View>
             <Image source={{uri: "https://"+compassAPI.compassURL+item["UserImageUrl"]}} style={{width:76, height:76, borderRadius: 38}} />
             </View>
             <Text>{item["Content"]}</Text>
@@ -277,6 +280,15 @@ class MainTabbedView extends Component {
 }
 
 const styles = StyleSheet.create({
+  cardHeader: {
+    flexDirection:"row",
+    flexWrap:"nowrap",
+    alignItems:"center",
+    justifyContent:"center",
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(0,0,0,0.05)"
+  },
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
