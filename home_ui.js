@@ -21,9 +21,10 @@ import { CompassAPI } from "./compass_api";
 import { SchoolSelectionView } from "./login_ui";
 const compassAPI = new CompassAPI();
 var ScrollableTabView = require("react-native-scrollable-tab-view");
-import { Button, Card } from 'react-native-material-design';
+import { Button, Card, Ripple } from 'react-native-material-design';
 import renderIf from "render-if";
 import IconTabBar from "./icon_tab_bar";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class NewsView extends Component {
   async refresh() {
@@ -59,6 +60,9 @@ class NewsView extends Component {
             <Image source={{uri: "https://"+compassAPI.compassURL+item["UserImageUrl"]}} style={{width:76, height:76, borderRadius: 38}} />
             </View>
             <Text>{item["Content"]}</Text>
+            <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
+            <Ripple style={{width: 30, height: 40, justifyContent: "center", alignItems: "center"}}><Icon name="more-vert" size={30} color="#cccccc" /></Ripple>
+            </View>
           </Card.Body>
         </Card>)});
     return (
