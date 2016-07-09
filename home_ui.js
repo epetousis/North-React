@@ -14,7 +14,8 @@ import {
   ScrollView,
   DatePickerIOS,
   DatePickerAndroid,
-  Platform
+  Platform,
+  AsyncStorage
 } from "react-native";
 import YANavigator from 'react-native-ya-navigator';
 import { CompassAPI } from "./compass_api";
@@ -27,16 +28,36 @@ import IconTabBar from "./icon_tab_bar";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class NewsView extends Component {
+  async retrieveHiddenItems() {
+    var hiddenItemsString = await AsyncStorage.getItem("@North:hiddenItems");
+    var hiddenItems = JSON.parse(hiddenItemsString);
+    return hiddenItems;
+  }
   async refresh() {
     this.setState({
       refreshing: true
     });
+    var hiddenItems = await this.retrieveHiddenItems();
     var homeFeed = await compassAPI.homeContent();
     if (homeFeed) {
       var newsItems = homeFeed["news"];
+      if (!this.state.showHiddenItems) {
+        var titles = [];
+        for (var index in newsItems) {
+          titles.push(newsItems[index]["Title"]);
+        }
+        for (var index in hiddenItems) {
+          var searchIndex = titles.indexOf(hiddenItems[index]);
+          if (searchIndex >= 0) {
+            newsItems.splice(searchIndex, 1);
+            titles.splice(titles.indexOf(hiddenItems[index]), 1);
+          }
+        }
+      }
       this.setState({
         items: newsItems,
-        refreshing: false
+        refreshing: false,
+        hiddenItems: hiddenItems
       });
     } else {
       console.log("Could not refresh home feed. Are you logged in?");
@@ -44,10 +65,39 @@ class NewsView extends Component {
   }
   constructor(props, context) {
     super(props, context);
-    this.state = {items:[], refreshing: false};
+    this.state = {items:[], hiddenItems: [], refreshing: false, showHiddenItems: false};
   }
   componentDidMount() {
     this.refresh();
+  }
+  async hidePost(title) {
+    var hiddenItems = await this.retrieveHiddenItems();
+    if (hiddenItems === null) {
+      hiddenItems = [];
+    }
+    hiddenItems.push(title);
+    this.setState({hiddenItems: hiddenItems});
+    await AsyncStorage.setItem("@North:hiddenItems", JSON.stringify(hiddenItems));
+    this.refresh();
+  }
+  async unhidePost(title) {
+    var hiddenItems = await this.retrieveHiddenItems();
+    if (hiddenItems === null) {
+      hiddenItems = [];
+      await AsyncStorage.setItem("@North:hiddenItems", JSON.stringify(hiddenItems));
+      return;
+    }
+    hiddenItems.splice(hiddenItems.indexOf(title), 1);
+    this.setState({hiddenItems: hiddenItems});
+    await AsyncStorage.setItem("@North:hiddenItems", JSON.stringify(hiddenItems));
+    this.refresh();
+  }
+  toggleHiddenItems() {
+    this.setState({showHiddenItems: !this.state.showHiddenItems});
+    this.refresh();
+  }
+  itemIsHidden(title) {
+    return this.state.hiddenItems.indexOf(title) >= 0;
   }
   render() {
     let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
@@ -61,7 +111,7 @@ class NewsView extends Component {
             </View>
             <Text>{item["Content"]}</Text>
             <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
-            <Ripple style={{width: 30, height: 40, justifyContent: "center", alignItems: "center"}}><Icon name="more-vert" size={30} color="#cccccc" /></Ripple>
+            <Ripple style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["Title"]) ? this.unhidePost(item["Title"]) : this.hidePost(item["Title"])}><Icon name={this.itemIsHidden(item["Title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></Ripple>
             </View>
           </Card.Body>
         </Card>)});
@@ -69,6 +119,7 @@ class NewsView extends Component {
       <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
       }>
+        <Button text={(this.state.showHiddenItems) ? "Hide hidden items" : "Show hidden items"} onPress={this.toggleHiddenItems.bind(this)} />
         {cardArray}
         {renderIf(this.state.items.length === 0)(
           <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
