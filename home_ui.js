@@ -172,9 +172,18 @@ class ScheduleView extends Component {
       }
     }
   }
+  classIsCancelled(classItem) {
+    if (classItem === null) {
+      return false;
+    }
+    return classItem["bgColor"] === "#EFEFEF";
+  }
   render() {
     let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
           <Card.Body>
+            {renderIf(this.classIsCancelled(item))(
+              <Text style={{fontSize: 26, color: "red"}}>CANCELLED</Text>
+            )}
             <Text style={{fontSize: 26}}>{item["SubjectShort"]}</Text>
             <Text>{item["ActivityName"]}</Text>
             <Text>{item["Start"]+" - "+item["Finish"]}</Text>
