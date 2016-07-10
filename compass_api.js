@@ -92,6 +92,16 @@ class CompassAPI {
     }
   }
 
+  async lessonDetails(instanceId) {
+    await this.retrieveSettings();
+    try {
+      var lessonDetails = await jsonPOSTRequest("https://"+this.compassURL+"/Services/Activity.svc/GetLessonsByInstanceIdQuick", {instanceId: instanceId}, this.apiKey);
+      return lessonDetails["d"];
+    } catch(error) {
+      console.log("An error occurred while retrieving lesson details.")
+    }
+  }
+
   async scheduleForDate(date) {
     await this.retrieveSettings();
     try {
