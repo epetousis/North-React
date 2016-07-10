@@ -97,6 +97,9 @@ class NewsView extends Component {
     this.refresh();
   }
   itemIsHidden(title) {
+    if (this.state.hiddenItems === null) {
+      return false;
+    }
     return this.state.hiddenItems.indexOf(title) >= 0;
   }
   render() {
