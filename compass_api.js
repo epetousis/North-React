@@ -81,6 +81,17 @@ class CompassAPI {
     }
   }
 
+  async detailsOfUser(userId) {
+    await this.retrieveSettings();
+    try {
+      var currentUserDetails = await this.userDetails();
+      var userDetail = await jsonPOSTRequest("https://"+this.compassURL+"/Services/User.svc/GetUserDetailsBlobByUserId", {targetUserId: userId, userId:currentUserDetails["UserId"]}, this.apiKey);
+      return userDetail["d"];
+    } catch(error) {
+      console.log("An error occurred while retrieving user details.")
+    }
+  }
+
   async scheduleForDate(date) {
     await this.retrieveSettings();
     try {
