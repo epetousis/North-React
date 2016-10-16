@@ -128,10 +128,10 @@ class LoginView extends Component {
       progressHUD: (<ProgressHUD />)
     });
     var apiKey = await loginObject.login(this.props.school, this.state.username, this.state.password);
+    this.setState({
+      progressHUD: (<View />)
+    });
     if (apiKey) {
-      this.setState({
-        progressHUD: (<View />)
-      });
       this.props.navigator.popToTop();
       this.props.mainView.refresh();
     } else {
