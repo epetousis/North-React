@@ -38,13 +38,12 @@ class NewsView extends Component {
       refreshing: true
     });
     var hiddenItems = await this.retrieveHiddenItems();
-    var homeFeed = await compassAPI.homeContent();
-    if (homeFeed) {
-      var newsItems = homeFeed["news"];
+    var newsItems = await compassAPI.newsFeed();
+    if (newsItems) {
       if (!this.state.showHiddenItems) {
         var titles = [];
         for (var index in newsItems) {
-          titles.push(newsItems[index]["Title"]);
+          titles.push(newsItems[index]["title"]);
         }
         for (var index in hiddenItems) {
           var searchIndex = titles.indexOf(hiddenItems[index]);
@@ -107,14 +106,14 @@ class NewsView extends Component {
           <Card.Body>
             <View style={styles.cardHeader}>
             <View style={{flex: 1}}>
-            <Text style={{fontSize: 21, marginBottom: 5}}>{item["Title"]}</Text>
-            <Text style={{fontSize: 18, marginBottom: 10}}>By {item["UploadedBy"]}</Text>
+            <Text style={{fontSize: 21, marginBottom: 5}}>{item["title"]}</Text>
+            <Text style={{fontSize: 18, marginBottom: 10}}>By {item["uploader"]}</Text>
             </View>
-            <Image source={{uri: "https://"+compassAPI.compassURL+item["UserImageUrl"]}} style={{width:76, height:76, borderRadius: 38}} />
+            <Image source={{uri: "https://"+compassAPI.compassURL+item["userImageUrl"]}} style={{width:76, height:76, borderRadius: 38}} />
             </View>
-            <Text>{item["Content"]}</Text>
+            <Text>{item["content"]}</Text>
             <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
-            <Ripple style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["Title"]) ? this.unhidePost(item["Title"]) : this.hidePost(item["Title"])}><Icon name={this.itemIsHidden(item["Title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></Ripple>
+            <Ripple style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["title"]) ? this.unhidePost(item["title"]) : this.hidePost(item["title"])}><Icon name={this.itemIsHidden(item["title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></Ripple>
             </View>
           </Card.Body>
         </Card>)});
