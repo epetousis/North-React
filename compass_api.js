@@ -120,15 +120,15 @@ class CompassAPI {
  * website.
  */
 async function getSchoolURLs(schoolName) {
-  try {
-    for (var i in serverDomains) {
-      var response = await jsonPOSTRequest("https://"+serverDomains[i]+schoolDetailsURL, {
-        schoolName: schoolName,
-      });
+  for (var i in serverDomains) {
+    var response = await jsonPOSTRequest("https://"+serverDomains[i]+schoolDetailsURL, {
+      schoolName: schoolName,
+    });
+    if (response["d"]) {
       return [ response["d"]["Fqdn"], response["d"]["SchoolId"] ];
+    } else {
+      console.log("Domain failed, trying remaining domains...")
     }
-  } catch(error) {
-    return null;
   }
 }
 
@@ -144,9 +144,15 @@ class CompassLogin {
       if (response["d"]) {
         return response["d"];
       } else {
-        console.log("Domain failed, trying remaining domains...")
+        console.log("Domain failed, trying remaining domains...");
       }
     }
+  }
+
+  async schoolLogoURL(schoolName) {
+    var schoolNames = await getSchoolURLs(schoolName);
+    var compassURL = schoolNames[0];
+    return "https://"+compassURL+"/Download/Cdn/Logo_Medium/";
   }
 
   /**
