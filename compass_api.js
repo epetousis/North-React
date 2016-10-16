@@ -51,11 +51,11 @@ class CompassAPI {
     this.retrieveSettings();
   }
 
-  async homeContent() {
+  async newsFeed() {
     await this.retrieveSettings();
     try {
-      var homeContent = await jsonPOSTRequest("https://"+this.compassURL+"/services/ios.svc/getcontent", {}, this.apiKey);
-      return homeContent["d"];
+      var newsFeedPosts = await jsonPOSTRequest("https://"+this.compassURL+"/services/mobile.svc/GetNewsFeed", {}, this.apiKey);
+      return newsFeedPosts["d"]["data"];
     } catch(error) {
       console.log("An error occurred while retrieving home page content.")
     }
