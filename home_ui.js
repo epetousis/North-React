@@ -15,14 +15,14 @@ import {
   DatePickerIOS,
   DatePickerAndroid,
   Platform,
-  AsyncStorage
+  AsyncStorage,
+  Button
 } from "react-native";
 import YANavigator from 'react-native-ya-navigator';
 import { CompassAPI } from "./compass_api";
 import { SchoolSelectionView } from "./login_ui";
 const compassAPI = new CompassAPI();
 var ScrollableTabView = require("react-native-scrollable-tab-view");
-import { Button, Card, Ripple } from 'react-native-material-design';
 import renderIf from "render-if";
 import IconTabBar from "./icon_tab_bar";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -102,8 +102,8 @@ class NewsView extends Component {
     return this.state.hiddenItems.indexOf(title) >= 0;
   }
   render() {
-    let cardArray = this.state.items.map((item, index) => {return(<Card key={index}>
-          <Card.Body>
+    let cardArray = this.state.items.map((item, index) => {return(<View key={index}>
+          <View>
             <View style={styles.cardHeader}>
             <View style={{flex: 1}}>
             <Text style={{fontSize: 21, marginBottom: 5}}>{item["title"]}</Text>
@@ -113,10 +113,10 @@ class NewsView extends Component {
             </View>
             <Text>{item["content"]}</Text>
             <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
-            <Ripple style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["title"]) ? this.unhidePost(item["title"]) : this.hidePost(item["title"])}><Icon name={this.itemIsHidden(item["title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></Ripple>
+            <Button style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["title"]) ? this.unhidePost(item["title"]) : this.hidePost(item["title"])}><Icon name={this.itemIsHidden(item["title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></Button>
             </View>
-          </Card.Body>
-        </Card>)});
+          </View>
+        </View>)});
     return (
       <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
