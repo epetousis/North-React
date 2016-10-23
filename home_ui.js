@@ -54,6 +54,7 @@ class NewsView extends Component {
       }
       this.setState({
         items: newsItems,
+        dataSource: this.ds.cloneWithRows(newsItems),
         refreshing: false,
         hiddenItems: hiddenItems
       });
@@ -64,6 +65,10 @@ class NewsView extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {items:[], hiddenItems: [], refreshing: false, showHiddenItems: false};
+    this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.state = {
+      dataSource: this.ds,
+    }
   }
   componentDidMount() {
     this.refresh();
@@ -101,7 +106,7 @@ class NewsView extends Component {
     return this.state.hiddenItems.indexOf(title) >= 0;
   }
   render() {
-    let cardArray = this.state.items.map((item, index) => {return(<View key={index}>
+    /*let cardArray = this.state.items.map((item, index) => {return(<View key={index}>
           <View>
             <View style={styles.cardHeader}>
             <View style={{flex: 1}}>
@@ -115,20 +120,72 @@ class NewsView extends Component {
             <TouchableHighlight style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["title"]) ? this.unhidePost(item["title"]) : this.hidePost(item["title"])}><Icon name={this.itemIsHidden(item["title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></TouchableHighlight>
             </View>
           </View>
-        </View>)});
+        </View>)});*/
     return (
-      <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
-        <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
-      }>
-        <TouchableHighlight onPress={this.toggleHiddenItems.bind(this)}><Text>{(this.state.showHiddenItems) ? "Hide hidden items" : "Show hidden items"}</Text></TouchableHighlight>
-        {cardArray}
-        {renderIf(this.state.items.length === 0)(
+      //<TouchableHighlight onPress={this.toggleHiddenItems.bind(this)}><Text>{(this.state.showHiddenItems) ? "Hide hidden items" : "Show hidden items"}</Text></TouchableHighlight>
+      <ListView
+        renderScrollComponent={(props) => <RecyclerViewBackedScrollView {...props}/>}
+        dataSource={this.state.dataSource} renderRow={this._renderRow.bind(this)}
+        renderSeparator={this._renderSeperator.bind(this)}
+        refreshControl={
+          <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
+        }/>
+        /*{renderIf(this.state.items.length === 0)(
           <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
             <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>No news items.</Text>
             <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new items.</Text>
           </View>
-        )}
-      </ScrollView>
+        )}*/
+    );
+  }
+  _pressRow(sectionID, rowID, rowData, highlightRow) {
+    this.props.navigator.push({
+      component: LoginView,
+      props: {
+        school: rowData,
+        mainView: this.props.mainView
+      }
+    });
+    highlightRow(sectionID, rowID);
+  }
+  _renderRow(rowData: string, sectionID: number, rowID: number, highlightRow: (sectionID: number, rowID: number) => void) {
+    if (Platform.OS === "android") {
+      return (
+        <TouchableNativeFeedback underlayColor="#cccccc" onPress={() => {this._pressRow(sectionID, rowID, rowData, highlightRow)}}>
+          <View>
+          <Text style={styles.row}>
+            {rowData.title}
+          </Text>
+          <Text style={styles.rowSubtitle}>
+            {rowData.uploader}
+          </Text>
+          </View>
+        </TouchableNativeFeedback>
+      );
+    } else {
+      return (
+        <TouchableHighlight underlayColor="#cccccc" onPress={() => {this._pressRow(sectionID, rowID, rowData, highlightRow)}}>
+          <View>
+          <Text style={styles.row}>
+            {rowData.title}
+          </Text>
+          <Text style={styles.rowSubtitle}>
+            {rowData.uploader}
+          </Text>
+          </View>
+        </TouchableHighlight>
+      );
+    }
+  }
+  _renderSeperator(sectionID: number, rowID: number, adjacentRowHighlighted: bool) {
+    return (
+    <View
+      key={rowID}
+      style={{
+      height: 1,
+      backgroundColor: '#CCCCCC',
+      }}
+    />
     );
   }
 }
@@ -203,11 +260,11 @@ class ScheduleView extends Component {
         <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
           <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
         }>
-          <Button text={this.state.date.toDateString()} onPress={this.toggleDatePicker.bind(this)} />
+          <TouchableHighlight onPress={this.toggleDatePicker.bind(this)}><Text>{this.state.date.toDateString()}</Text></TouchableHighlight>
           {cardArray}
           {renderIf(this.state.items.length === 0)(
             <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-              <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>There's nothing on this date.</Text>
+              <Text style={{fontSize: 28, textAlign: "center", marginBottom: 10}}>No classes today.</Text>
               <Text style={{fontSize: 20, textAlign: "center"}}>Pull to check for new classes.</Text>
             </View>
           )}
@@ -227,7 +284,7 @@ class DebugView extends Component {
   }
   render() {
     return (
-      <Button text="Log out" style={{margin: 20}} onPress={() => this.logOut()}>Log out</Button>
+      <TouchableHighlight style={{margin: 20}} onPress={() => this.logOut()}><Text>Log out</Text></TouchableHighlight>
     );
   }
 }
@@ -382,9 +439,15 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   row: {
-    margin:15,
+    padding: 10,
+    paddingBottom: 0,
     fontSize: 16,
-    textAlign: "center",
+    justifyContent: "center"
+  },
+  rowSubtitle: {
+    padding: 10,
+    paddingTop: 0,
+    fontSize: 12,
     justifyContent: "center"
   }
 });
