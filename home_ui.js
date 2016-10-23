@@ -15,8 +15,7 @@ import {
   DatePickerIOS,
   DatePickerAndroid,
   Platform,
-  AsyncStorage,
-  Button
+  AsyncStorage
 } from "react-native";
 import YANavigator from 'react-native-ya-navigator';
 import { CompassAPI } from "./compass_api";
@@ -113,7 +112,7 @@ class NewsView extends Component {
             </View>
             <Text>{item["content"]}</Text>
             <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "flex-end"}}>
-            <Button style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["title"]) ? this.unhidePost(item["title"]) : this.hidePost(item["title"])}><Icon name={this.itemIsHidden(item["title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></Button>
+            <TouchableHighlight style={{width: 40, height: 40, justifyContent: "center", alignItems: "center"}} onPress={() => this.itemIsHidden(item["title"]) ? this.unhidePost(item["title"]) : this.hidePost(item["title"])}><Icon name={this.itemIsHidden(item["title"]) ? "remove-red-eye" : "close"} size={30} color="#cccccc" /></TouchableHighlight>
             </View>
           </View>
         </View>)});
@@ -121,7 +120,7 @@ class NewsView extends Component {
       <ScrollView contentContainerStyle={{flex: this.state.items.length === 0 ? 1 : 0}} refreshControl={
         <RefreshControl refreshing={this.state.refreshing} onRefresh={this.refresh.bind(this)} />
       }>
-        <Button text={(this.state.showHiddenItems) ? "Hide hidden items" : "Show hidden items"} onPress={this.toggleHiddenItems.bind(this)} />
+        <TouchableHighlight onPress={this.toggleHiddenItems.bind(this)}><Text>{(this.state.showHiddenItems) ? "Hide hidden items" : "Show hidden items"}</Text></TouchableHighlight>
         {cardArray}
         {renderIf(this.state.items.length === 0)(
           <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
